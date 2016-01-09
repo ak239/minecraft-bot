@@ -74,6 +74,25 @@ Serializer.prototype = {
         return this;
     },
 
+    appendByte: function(val)
+    {
+        if (val < - 128 || val > 127)
+            throw new Error(val + " is not byte");
+        this.bytes.push(val);
+        return this;
+    },
+
+    appendShort: function(val)
+    {
+        if (val < -32768 || val > 32767)
+            throw new Error(val + " is not byte");
+        var b = new Buffer(2);
+        b.writeInt16BE(val);
+        for (var i = 0; i < b.length; ++i)
+            this.bytes.push(b.readUInt8(i));
+        return this;
+    },
+
     appendFloat: function(val)
     {
         var b = new Buffer(4);
@@ -89,6 +108,14 @@ Serializer.prototype = {
         b.writeDoubleBE(val, 0);
         for (var i = 0; i < b.length; ++i)
             this.bytes.push(b.readUInt8(i));
+        return this;
+    },
+
+    appendByteArrayWithLength: function(val)
+    {
+        this.appendShort(val.length);
+        for (b of val)
+            this.bytes.push(b);
         return this;
     },
 

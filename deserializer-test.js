@@ -6,6 +6,14 @@ var deserializer = new d.Deserializer();
 
 TestRunner.startGroup("serialize-deserialize");
 
+TestRunner.addTest(function(){
+for (var type of d.Deserializer.ImplementedTypes) {
+    console.log(type);
+    // IntField = function(name) { Field.call(this, name, "Int"); }
+}
+return true;
+}, "dump implemented");
+
 /**
  * VarInt
  */
@@ -74,6 +82,23 @@ testValues.push(9223372036854775807);
 
 TestRunner.addTest(serializeDeserializeTest.bind(null, "VarLong", testValues), "VarLong");
 
+/**
+ * Byte
+ */
+var testValues = [];
+for (var i = -127; i <= 127; ++i)
+    testValues.push(i);
+
+TestRunner.addTest(serializeDeserializeTest.bind(null, "Byte", testValues), "Byte");
+
+/**
+ * Short
+ */
+var testValues = [];
+for (var i = -32768; i < 32767; ++i)
+    testValues.push(i);
+
+TestRunner.addTest(serializeDeserializeTest.bind(null, "Short", testValues), "Short");
 
 function serializeDeserializeTest(type, testValues)
 {

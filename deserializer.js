@@ -5,6 +5,8 @@ Deserializer = function()
     this.currentByte = -1;
 }
 
+Deserializer.ImplementedTypes = [];
+
 Deserializer.prototype = {
     appendBuffer: function(buffer)
     {
@@ -56,6 +58,16 @@ Deserializer.prototype = {
         return this._nextByte();
     },
 
+    readByte: function()
+    {
+        return this._nextByte(true);
+    },
+
+    readShort: function()
+    {
+        return new Buffer([this._nextByte(), this._nextByte()]).readInt16BE();
+    },
+
     readFloat: function()
     {
         var bytes = [];
@@ -70,6 +82,15 @@ Deserializer.prototype = {
         for (var i = 0; i < 8; ++i)
             bytes.push(this._nextByte());
         return new Buffer(bytes).readDoubleBE();
+    },
+
+    readByteArrayWithLength: function()
+    {
+        var l = this.readShort();
+        var bytes = [];
+        for (var i = 0; i < l; ++i)
+            bytes.push(this._nextByte());
+        return new Buffer(bytes);
     },
 
     atEnd: function()
@@ -90,7 +111,7 @@ Deserializer.prototype = {
         return null;
     },
 
-    _nextByte: function()
+    _nextByte: function(isSigned)
     {
         if (this.currentBuffer === -1) {
             if (this.buffers.length === 0)
@@ -105,8 +126,15 @@ Deserializer.prototype = {
         } else {
             throw new Error("Unexpected buffer finish");
         }
-        return this.buffers[this.currentBuffer].readUInt8(this.currentByte);
+        if (!isSigned)
+            return this.buffers[this.currentBuffer].readUInt8(this.currentByte);
+        return this.buffers[this.currentBuffer].readInt8(this.currentByte);
     }
+}
+
+for (var x in Deserializer.prototype) {
+    if (x.startsWith("read"))
+        Deserializer.ImplementedTypes.push(x.substr(4));
 }
 
 module.exports = {

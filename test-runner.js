@@ -1,4 +1,4 @@
-#!/usr/local/google/home/kozyatinskiy/node/bin/node
+#!/usr/local/bin/node
 
 /**
  * TestRunner
@@ -22,6 +22,7 @@ TestRunner.addTest = function(func, name)
 require("./serializer-tests.js");
 require("./deserializer-test.js");
 require("./serverbound-packets-tests.js");
+require("./packets-tests.js");
 
 var prevGroupName = "";
 for (var test of TestRunner.tests) {

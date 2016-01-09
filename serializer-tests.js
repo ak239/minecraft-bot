@@ -1,4 +1,3 @@
-#!/usr/local/google/home/kozyatinskiy/node/bin/node
 
 TestRunner.startGroup("serializer");
 
